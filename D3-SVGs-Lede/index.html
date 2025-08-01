@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+
+    <!-- some basic stuff  -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SVG with D3</title>
+
+    <!-- 
+      add your stylesheet 
+      base.css loads the templated css that should not be changed
+      you can tweak your own css in custom.css and it will override base.css
+      WARNING: the order of the stylesheets matters
+    -->
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="custom.css">
+
+    <!-- Step 2: add your d3 script below -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <h1>Number of 20-year-olds in San Francisco has fallen over last 10 years</h1>
+    <p>The proportion of <span style="color:#ed5813;font-weight: bold;">20-year-olds</span> living in S.F. has fallen compared to the <span style="color:#bebebe;font-weight: bold;">population</span>.</p>
+    <div id="my-svg-chart"></div>
+
+    <!-- your JS code that uses d3 to manipulate data -->
+    <script>
+      // Step 3. add data variables
+      const totalpop2013 = 100,
+            youthpop2013 = 18,
+            totalpop2023 = 100,
+            youthpop2023 = 14
+      
+      // Step 4. transform data into usable scales
+      const scaleRadius = d3.scaleSqrt().domain([0, totalpop2013]).range([0, 100]);
+      
+      // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
+      const myChart = d3.select('#my-svg-chart')
+        .append('svg')
+        .attr('width', 640)
+        .attr('height', 640)
+
+      // Step 6. create SVG elements binded with data
+      const circles = myChart
+        .selectAll('circle')
+        .data([totalpop2013, youthpop2013, totalpop2023, youthpop2023])
+        .join('circle');
+
+      // Step 7. position the SVG shapes at the right places
+      circles
+        .attr('cx', function(d,i) {
+          // i == 0 : youthpop2013, i == 1 : totalpop2013
+          if (i < 2) {return 100}
+          else {return 300}
+        })
+        .attr('cy', 100)
+        .attr('r', (d) => scaleRadius(d))
+
+      // Step 8. color the SVG shapes using style attributes
+      circles
+        .style('fill', function(d,i) {
+          return i%2 == 0 ? '#bebebe' : '#ed5813'
+        })
+
+      // Step 9. Add labels
+      // first label
+      myChart.append('text')
+        .attr('x', 100)
+        .attr('y', 220)
+        .attr('text-anchor', 'middle') 
+        .selectAll('tspan')
+        .data([
+          '18% of SF population',           // line 1
+          'were 20-year-olds in 2013'       // line 2
+        ])
+        .enter().append('tspan')
+          .attr('x', 100)                   // reset x for each line
+          .attr('dy', (d, i) => i ? '1.2em' : 0)
+          .text(d => d);
+
+      // second label
+      myChart.append('text')
+        .attr('x', 300)
+        .attr('y', 220)
+        .attr('text-anchor', 'middle')
+        .selectAll('tspan')
+        .data([
+          '14% were 20-year-olds',          // line 1
+          'by 2023'                         // line 2
+        ])
+        .enter().append('tspan')
+          .attr('x', 300)
+          .attr('dy', (d, i) => i ? '1.2em' : 0)
+          .text(d => d);
+
+
+    </script>
+
+  </body>
+</html>
