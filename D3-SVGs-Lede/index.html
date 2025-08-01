@@ -66,6 +66,22 @@
           return i%2 == 0 ? '#bebebe' : '#ed5813'
         })
 
+      // Adding animation! Tagging circles to select later
+      // grow circles once on load
+
+      // set the circles’ initial state
+      circles
+        .attr('r', 0)          // start at radius 0
+        .style('opacity', 0);  // and fully transparent
+
+      // animate them to their final size / opacity
+      circles.transition()
+        .duration(1500)        // 2 second fade-in
+        .ease(d3.easeCubic)    // smoothing the ease
+        .attr('r', d => scaleRadius(d))
+        .style('opacity', 1);
+
+
       // Step 9. Add labels
       // first label
       myChart.append('text')
